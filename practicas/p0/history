@@ -1,0 +1,29 @@
+./programa3
+gcc -o programa3 programa3.c mi_biblio2.a 
+ar crv mi_biblio2.a intercambia.o
+gcc -c intercambia.c 
+touch programa3.c
+touch intercambia.c
+./programa2 
+gcc -o programa2 programa2.c mi_biblio.a 
+touch programa2.c
+ar crv mi_biblio.a primero.o segundo.o
+touch lib.h
+ls *.o
+gcc -c primero.c segundo.c 
+touch segundo.c
+touch primero.c
+gcc -o foo programa1.c
+cat info.txt
+./script2.sh
+touch prueba1.txt
+chmod +x script2.sh
+touch script2.sh
+./script1.sh 
+chmod +x script1.sh 
+nano script1.sh
+nano a.out 
+gcc -g programa1.c 
+./foo 
+gcc -o foo programa1.c 
+touch programa1.c

@@ -1,13 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-main()
+int main()
 {
 
 FILE *archivo1, *archivo2;
 char c;
-
-archivo1=fopen("prueba.txt","r");
+char nombreArchivo[32];
+printf("Archivo de entrada: ");
+scanf("%s", &nombreArchivo);
+//printf("%s", nombreArchivo);
+archivo1=fopen(nombreArchivo,"r");
 archivo2=fopen("copia.txt","w");
 
 if ((archivo1==NULL)||(archivo2==NULL))
