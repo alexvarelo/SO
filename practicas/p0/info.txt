@@ -1,2 +1,1 @@
-info.txt
-prueba1.txt
+prueba.txt [22]Bytes
