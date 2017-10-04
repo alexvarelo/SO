@@ -14,7 +14,7 @@ Ejercicios y prácticas de la asignatura de Sistemas Operativos de la Facultad d
 ---
 ## Prácticas
 
-- [Práctica 0 : Conceptos básicos GNU/Linux y C](/practicas/p0)
+- Práctica 0: [Conceptos básicos GNU/Linux y C](/practicas/p0)
 
 ~~~~
 Nombre: Javier Martín Villarreal
