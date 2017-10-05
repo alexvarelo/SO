@@ -12,14 +12,15 @@ el tamaño del fichero
 */
 FILE *archivo1, *archivo2;
 char c;
-char nombreArchivo[32];
+char *nombreArchivo;
 int fsize = 0;
 
 /*
 Pide el nombre del fichero a medir (max 32 caracteres)
 */
 printf("Archivo de entrada: ");
-scanf("%s", &nombreArchivo);
+scanf("%ms", &nombreArchivo);
+
 //printf("%s", nombreArchivo);
 
 /*
@@ -35,7 +36,7 @@ Comprueba que existan los dos ficheros (si una de las direcciones
 de memoria conitene un valor nulo, saldrá de la ejecución con 
 error de apertura de ficheros)
 */
-if ((archivo1==NULL)||(archivo2==NULL))
+if (archivo1==NULL)
 
 printf("Error al abrir ficheros");
 
@@ -60,7 +61,7 @@ else
 	Escribimos en el fichero el nombre del archivo y su tamaño
 	*/
 	fprintf(archivo2, "%s [%d]Bytes", nombreArchivo, fsize);
-
+	free(nombreArchivo);
 /*
 Cerramos los dos ficheros avisando si ha habido algún error
 */
