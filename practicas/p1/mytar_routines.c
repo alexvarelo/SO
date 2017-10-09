@@ -130,6 +130,7 @@ int createTar(int nFiles, char *fileNames[], char tarName[])
 	stHeaderEntry *header;
 	unsigned int headersize;
 
+
 	//file[s]
 	if (nFiles <= 0) {
 		fprintf(stderr,"%s",use);
@@ -229,5 +230,31 @@ int createTar(int nFiles, char *fileNames[], char tarName[])
 int extractTar(char tarName[])
 {
 	// Complete the function
+	int nFiles, i, j;
+	FILE *outFile, *tarFile;
+	stHeaderEntry *header;
+	
+	if((tarFile = fopen(tarName, "r"))==NULL){
+		fprintf(stderr, "The mtar file %s could not be opened: ",tarName);
+		perror(NULL);
+		return (EXIT_FAILURE);
+	}
+
+	if((header = readHeader(tarFile, &nFiles))==NULL){
+		remove(tarName);
+		return (EXIT_FAILURE);
+	}
+	
+	for(i=0; i<nFiles; i++){
+		outFile=fopen(header[i].name, "w");
+		copynFile(tarFile, outFile, header[i].size);
+		fclose(outFile);
+	}
+
+	for (j = 0; j < nFiles; j++)
+		free(header[j].name);
+	free(header);
+	fclose(tarFile);
+
 	return EXIT_FAILURE;
 }
