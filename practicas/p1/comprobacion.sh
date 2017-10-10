@@ -24,26 +24,19 @@ mkdir tmp
 cd tmp
 echo Hello world! > file1.txt
 head /etc/passwd > file2.txt
-../mytar -cf filetar.mtar file1.txt file2.txt
+head -c1024 /dev/urandom > file3.dat
+../mytar -rf filetar.mtar file1.txt file2.txt file3.dat
 mkdir out
 cd out
 ../../mytar -xf ../filetar.mtar
 
-DIFF=$(diff file1.txt ../file1.txt) 
-if [ "$DIFF" != "" ] 
-then
+if diff file1.txt ../file1.txt && diff file2.txt ../file2.txt && diff file3.dat ../file3.dat
+then 
     cd ../..
-    echo "file1.txt no son iguales"
-    exit 1
-fi
-
-DIFF=$(diff file2.txt ../file2.txt) 
-if [ "$DIFF" != "" ] 
-then
+    echo Correct
+    exit 0
+else 
     cd ../..
-    echo "file2.txt no son iguales"
-    exit 1
+    echo Los ficheros no son iguales
+    exit 1    
 fi
-cd ../..
-echo Correct
-exit 0

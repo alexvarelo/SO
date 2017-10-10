@@ -4,7 +4,7 @@
        
 #include "mytar.h"
        
-char use[]="Usage: tar -c|x -f file_mytar [file1 file2 ...]\n";
+char use[]="Usage: tar -c|x|r -f file_mytar [file1 file2 ...]\n";
 
 int main(int argc, char *argv[]) {
 
@@ -18,13 +18,16 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
   //Parse command-line options
-  while((opt = getopt(argc, argv, "cxf:")) != -1) {
+  while((opt = getopt(argc, argv, "cxrf:")) != -1) {
     switch(opt) {
       case 'c':
         flag=(flag==NONE)?CREATE:ERROR;
         break;
       case 'x':
         flag=(flag==NONE)?EXTRACT:ERROR;
+        break;
+      case 'r':
+        flag=(flag==NONE)?REVERSE:ERROR;
         break;
       case 'f':
         tarName = optarg;
@@ -60,8 +63,14 @@ int main(int argc, char *argv[]) {
       }
       retCode=extractTar(tarName);
       break;
+    case REVERSE:
+      retCode=createReverseTar(nExtra, &argv[optind], tarName);
+      break;
     default:
       retCode=EXIT_FAILURE;
   }
   exit(retCode);
 }
+
+
+
