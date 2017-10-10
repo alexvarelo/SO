@@ -195,6 +195,7 @@ int createTar(int nFiles, char *fileNames[], char tarName[])
 		fclose(inputFile);
 	}
 
+
 	//Write each header file[s] with the file[s]
 	rewind(tarFile);
 	fwrite(&nFiles, sizeof (int), 1, tarFile);
@@ -258,45 +259,48 @@ int createReverseTar(int nFiles, char *fileNames[], char tarName[]){
 	}
 
 	//Seek in mtar data area
-	fseek(tarFile, headersize, SEEK_SET);
-
-	//Fill header info (at RAM memory) and copy file[s] data into tar
-	for (i = 0; i < nFiles; i++) {
-		//Source file[s] open
-		if ((inputFile = fopen(fileNames[i], "r")) == NULL) {
-			fprintf(stderr,
-				"Not possible to open tar file %s: \n",
-				fileNames[i]);
-			perror(NULL);
-			fclose(tarFile);
-			remove(tarName);
-			for (j = 0; j < nFiles; j++)
-				free(header[j].name);
-			free(header);
-			return (EXIT_FAILURE);
-		}
-		//File[s] copy
-		header[i].size = copynFile(inputFile, tarFile, INT_MAX);
-		fclose(inputFile);
-	}
-	
-	//Write each header file[s] with the file[s]
+	//fseek(tarFile, headersize, SEEK_SET);
 	rewind(tarFile);
-	fwrite(&nFiles, sizeof (int), 1, tarFile);
-	for (i = 0; i < nFiles; i++) {
-		fwrite(header[i].name, 1, strlen(header[i].name) + 1, tarFile);
-		fwrite(&header[i].size, sizeof (header[i].size), 1, tarFile);
+		//Fill header info (at RAM memory) and copy file[s] data into tar
+		for (i = 0; i < nFiles; i++) {
+			//Source file[s] open
+			if ((inputFile = fopen(fileNames[i], "r")) == NULL) {
+				fprintf(stderr,
+					"Not possible to open tar file %s: \n",
+					fileNames[i]);
+				perror(NULL);
+				fclose(tarFile);
+				remove(tarName);
+				for (j = 0; j < nFiles; j++)
+					free(header[j].name);
+				free(header);
+				return (EXIT_FAILURE);
+			}
+			//File[s] copy
+			header[i].size = copynFile(inputFile, tarFile, INT_MAX);
+			fclose(inputFile);
+		}
+	
+	
+		//Write each header file[s] with the file[s]
+		//rewind(tarFile);
+		fwrite(&nFiles, sizeof (int), 1, tarFile);
+		int totalsize=0;
+		for (i = 0; i < nFiles; i++) {
+			fwrite(header[i].name, 1, strlen(header[i].name) + 1, tarFile);
+			fwrite(&header[i].size, sizeof (header[i].size), 1, tarFile);
+			totalsize+=header[i].size;
+		}
+		//fwrite(totalsize, sizeof(int), tarFile);
+		fprintf(stdout, "mtar file created successfully\n");
+	
+		for (j = 0; j < nFiles; j++)
+			free(header[j].name);
+		free(header);
+		fclose(tarFile);
+	
+		return (EXIT_SUCCESS);
 	}
-
-	fprintf(stdout, "mtar file created successfully\n");
-
-	for (j = 0; j < nFiles; j++)
-		free(header[j].name);
-	free(header);
-	fclose(tarFile);
-
-	return (EXIT_SUCCESS);
-}
 
 /** Extract files stored in a tarball archive
  *

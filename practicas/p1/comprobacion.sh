@@ -25,7 +25,7 @@ cd tmp
 echo Hello world! > file1.txt
 head /etc/passwd > file2.txt
 head -c1024 /dev/urandom > file3.dat
-../mytar -rf filetar.mtar file1.txt file2.txt file3.dat
+../mytar -cf filetar.mtar file1.txt file2.txt file3.dat
 mkdir out
 cd out
 ../../mytar -xf ../filetar.mtar
