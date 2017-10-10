@@ -284,14 +284,14 @@ int createReverseTar(int nFiles, char *fileNames[], char tarName[]){
 	
 		//Write each header file[s] with the file[s]
 		//rewind(tarFile);
-		fwrite(&nFiles, sizeof (int), 1, tarFile);
+		//fwrite(&nFiles, sizeof (int), 1, tarFile);
 		int totalsize=0;
 		for (i = 0; i < nFiles; i++) {
 			fwrite(header[i].name, 1, strlen(header[i].name) + 1, tarFile);
 			fwrite(&header[i].size, sizeof (header[i].size), 1, tarFile);
 			totalsize+=header[i].size;
 		}
-		//fwrite(totalsize, sizeof(int), tarFile);
+		fwrite(&totalsize, sizeof(int), 1, tarFile);
 		fprintf(stdout, "mtar file created successfully\n");
 	
 		for (j = 0; j < nFiles; j++)
