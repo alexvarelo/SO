@@ -8,7 +8,8 @@ typedef enum{
   ERROR,
   CREATE,
   EXTRACT,
-  REVERSE
+  REVERSE,
+  EXTRACTREVERSE
 } flags;
 
 typedef struct {
@@ -19,5 +20,5 @@ typedef struct {
 int createTar(int nFiles, char *fileNames[], char tarName[]);
 int extractTar(char tarName[]);
 int createReverseTar(int nFiles, char *fileNames[], char tarName[]);
-
+int extractReverse(char tarName[]);
 #endif /* _MYTAR_H */

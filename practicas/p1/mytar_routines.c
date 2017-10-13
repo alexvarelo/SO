@@ -77,7 +77,6 @@ stHeaderEntry* readHeader(FILE * tarFile, int *nFiles)
 
 	// #files
 	fread(nFiles, sizeof (int), 1, tarFile);
-
 	// head of tar
 	if ((header = (stHeaderEntry *) malloc(sizeof (stHeaderEntry) * (*nFiles)))
 	    == NULL) {
@@ -86,7 +85,7 @@ stHeaderEntry* readHeader(FILE * tarFile, int *nFiles)
 		fclose(tarFile);
 		return NULL;
 	}
-
+	
 	//Load header's file
 	for (i = 0; i < *nFiles; i++) {
 		if ((header[i].name=loadstr(tarFile))==NULL) {
@@ -284,7 +283,7 @@ int createReverseTar(int nFiles, char *fileNames[], char tarName[]){
 	
 		//Write each header file[s] with the file[s]
 		//rewind(tarFile);
-		//fwrite(&nFiles, sizeof (int), 1, tarFile);
+		fwrite(&nFiles, sizeof (int), 1, tarFile);
 		int totalsize=0;
 		for (i = 0; i < nFiles; i++) {
 			fwrite(header[i].name, 1, strlen(header[i].name) + 1, tarFile);
@@ -302,6 +301,41 @@ int createReverseTar(int nFiles, char *fileNames[], char tarName[]){
 		return (EXIT_SUCCESS);
 	}
 
+	int extractReverse(char tarName[]){
+		int nFiles, i, j;
+		FILE *outFile, *tarFile;
+		stHeaderEntry *header;
+		int totalsize;
+
+		if((tarFile = fopen(tarName, "r"))==NULL){
+			fprintf(stderr, "The mtar file %s could not be opened: ",tarName);
+			perror(NULL);
+			return (EXIT_FAILURE);
+		}
+
+
+		fseek(tarFile,-sizeof(int), SEEK_END);
+		fread(&totalsize, sizeof(int), 1, tarFile);
+		fseek(tarFile, totalsize, SEEK_SET);
+
+		if((header = readHeader(tarFile, &nFiles))==NULL){
+			remove(tarName);
+			return (EXIT_FAILURE);
+		}
+		rewind(tarFile);
+		for(i=0; i<nFiles; i++){
+			outFile=fopen(header[i].name, "w");
+			copynFile(tarFile, outFile, header[i].size);
+			fclose(outFile);
+		}
+	
+		for (j = 0; j < nFiles; j++)
+			free(header[j].name);
+		free(header);
+		fclose(tarFile);
+	
+		return EXIT_FAILURE;
+	}
 /** Extract files stored in a tarball archive
  *
  * tarName: tarball's pathname

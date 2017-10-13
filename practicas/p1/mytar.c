@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
   //Parse command-line options
-  while((opt = getopt(argc, argv, "cxrf:")) != -1) {
+  while((opt = getopt(argc, argv, "cxref:")) != -1) {
     switch(opt) {
       case 'c':
         flag=(flag==NONE)?CREATE:ERROR;
@@ -29,6 +29,8 @@ int main(int argc, char *argv[]) {
       case 'r':
         flag=(flag==NONE)?REVERSE:ERROR;
         break;
+      case 'e':
+        flag=(flag==NONE)?EXTRACTREVERSE:ERROR;
       case 'f':
         tarName = optarg;
         break;
@@ -66,6 +68,13 @@ int main(int argc, char *argv[]) {
     case REVERSE:
       retCode=createReverseTar(nExtra, &argv[optind], tarName);
       break;
+    case EXTRACTREVERSE:
+      if(nExtra!=0){
+        fprintf(stderr,"%s",use);
+        exit(EXIT_FAILURE);
+      }
+      retCode=extractReverse(tarName);
+    break;
     default:
       retCode=EXIT_FAILURE;
   }
