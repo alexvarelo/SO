@@ -58,7 +58,7 @@ int main(void)
       for (j = 0; j < 4; j++)
       {
          printf("Soy el padre con PID %d y estoy en la iteracion %d\n", soy, j);
-         sleep(1);
+         sleep(5);
       }
       exit(0);
    }
