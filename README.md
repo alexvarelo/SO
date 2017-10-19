@@ -16,6 +16,7 @@ Ejercicios y prácticas de la asignatura de Sistemas Operativos de la Facultad d
 ---
 ## Ejercicios
 
+- Ejercicio 0: [Practicando con fork](/ejercicios/e1)
 ~~~~
 Nombre: Javier Martín Villarreal
 
