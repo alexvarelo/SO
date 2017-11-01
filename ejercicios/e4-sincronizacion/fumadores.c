@@ -51,7 +51,7 @@ void *Agente(void *arg){
     printf("Agente: pongo %d %d en la mesa.\n", i1, i2);
     
     pthread_mutex_unlock(&cerrojo);
-    pthread_cond_signal(&vacia);
+   // pthread_cond_signal(&vacia);
 }
     pthread_exit(0);  
 }
@@ -60,8 +60,8 @@ void *Fumador(void *arg) {
     int *miIngrediente = (int *)arg;
     while(1){
     pthread_mutex_lock(&cerrojo); 
-    if(mesa+(*miIngrediente) != 6){
-        pthread_cond_wait(&vacia, &cerrojo);
+    if(mesa+(*miIngrediente) == 6){
+     //   pthread_cond_wait(&vacia, &cerrojo);
     printf("Fumador: tengo %d y cojo los %d que necesito para tener %d.\n", (*miIngrediente), mesa, mesa+(*miIngrediente));
     mesa = 0;
     }
