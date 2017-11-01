@@ -19,6 +19,7 @@ Ejercicios y prácticas de la asignatura de Sistemas Operativos de la Facultad d
 - Ejercicio 0: [Practicando con fork](/ejercicios/e1-fork)
 - Ejercicio 1: [Probando ejemplos con hilos](/ejercicios/e2-hilos)
 - Ejercicio 2: [Ejemplo de variable MAL compartida entre hilos](/ejercicios/e3-LecturaEscritura)
+- Ejercicio 2 sincronización: [Fumadores](/ejercicios/e4-sincronizacion/fumadores.c) 
 ~~~~
 Nombre: Javier Martín Villarreal
 
