@@ -12,6 +12,7 @@ Ejercicios y prácticas de la asignatura de Sistemas Operativos de la Facultad d
 
 - Práctica 0: [Conceptos básicos GNU/Linux y C](/practicas/p0)
 - Práctica 1: [Compresor y descompresor](/practicas/p1)
+- Práctica 3: [Simulador de planificadores en POSIX](/practicas/p3)
 
 ---
 ## Ejercicios
