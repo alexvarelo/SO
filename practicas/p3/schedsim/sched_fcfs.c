@@ -25,25 +25,14 @@ static void enqueue_task_fcfs(task_t* t,int cpu, int runnable)
 		return;
 
     insert_slist(&rq->tasks, t);
-
-    /* If the task was not runnable before, update the number of runnable tasks in the rq*/
-	if (!runnable) {
-		task_t* current=rq->cur_task;
-
-		/* Trigger a preemption if this task has a shorter CPU burst than current */
-		if (preemptive_scheduler && !is_idle_task(current) && t->runnable_ticks_left<current->runnable_ticks_left) {
-			rq->need_resched=TRUE;
-			current->flags|=TF_INSERT_FRONT; /* To avoid unfair situations in the event
-                                                another task with the same length wakes up as well*/
-		}
-	}
 }
 
 static task_t* steal_task_fcfs(runqueue_t* rq,int cpu)
 {
     /*
     Completar codigo
-    */
+	*/
+
 	task_t* t=tail_slist(&rq->tasks);
 
 	if (t) {
