@@ -88,6 +88,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'q':
 			rr_quantum=atoi(optarg);
+			tjf_quantum=atoi(optarg);
 			break;
 		case 'l':
 			load_balancing_period=atoi(optarg);

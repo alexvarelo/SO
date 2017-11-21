@@ -97,6 +97,7 @@ extern bool debug_mode;
 extern useconds_t tick_delay;
 extern int max_simulation_steps;
 extern int rr_quantum;
+extern int tjf_quantum;
 extern int load_balancing_period;
 
 /* This interface must be implemented for each scheduling algorithm */
@@ -116,12 +117,14 @@ extern sched_class_t rr_sched;
 extern sched_class_t sjf_sched;
 extern sched_class_t fcfs_sched;
 extern sched_class_t prio_sched;
+extern sched_class_t tjf_sched;
 /* Numerical IDs for the available scheduling algorithms */
 enum {
 	RR_SCHED,
 	SJF_SCHED,
 	FCFS_SCHED,
 	PRIO_SCHED,
+	TJF_SCHED,
 	NR_AVAILABLE_SCHEDULERS
 };
 
@@ -137,6 +140,7 @@ static const sched_choice_t available_schedulers[NR_AVAILABLE_SCHEDULERS]= {
 	{SJF_SCHED,"SJF",&sjf_sched},
 	{FCFS_SCHED,"FCFS",&fcfs_sched},
 	{PRIO_SCHED,"PRIO",&prio_sched},
+	{TJF_SCHED,"TJF",&tjf_sched},
 };
 
 
