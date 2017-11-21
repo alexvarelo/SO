@@ -1,12 +1,12 @@
 #include "sched.h"
 
-static task_t* pick_next_task_fcfs(runqueue_t* rq,int cpu)
+static task_t* pick_next_task_fact(runqueue_t* rq,int cpu)
 {
     /*
     Completar codigo
     */
     task_t* t=head_slist(&rq->tasks);
-
+ 
 	/* Current is not on the rq -> let's remove it */
 	if (t) 
 		remove_slist(&rq->tasks,t);
@@ -14,20 +14,27 @@ static task_t* pick_next_task_fcfs(runqueue_t* rq,int cpu)
 	return t;
 }
 
-static void enqueue_task_fcfs(task_t* t,int cpu, int runnable)
+static int factor(task_t* t){
+    return (t->sys_time!=0)?((t->last_time_enqueued-t->real_time) / t->sys_time):(t->last_time_enqueued-t->real_time);
+}
+
+static int compare_tasks_factor(void *t1,void *t2)
 {
-    /*
-    Completar codigo
-    */
+	return factor((task_t*)t1)-factor((task_t*)t2);
+}
+
+static void enqueue_task_fact(task_t* t,int cpu, int runnable)
+{
     runqueue_t* rq=get_runqueue_cpu(cpu);
 
     if (t->on_rq || is_idle_task(t))
 		return;
 
-    insert_slist(&rq->tasks, t);
+    sorted_insert_slist(&rq->tasks, t, 1, compare_tasks_factor); 
+
 }
 
-static task_t* steal_task_fcfs(runqueue_t* rq,int cpu)
+static task_t* steal_task_fact(runqueue_t* rq,int cpu)
 {
     /*
     Completar codigo
@@ -44,8 +51,8 @@ static task_t* steal_task_fcfs(runqueue_t* rq,int cpu)
 }
 
 
-sched_class_t fcfs_sched= {
-	.pick_next_task=pick_next_task_fcfs,
-	.enqueue_task=enqueue_task_fcfs,
-	.steal_task=steal_task_fcfs
+sched_class_t fact_sched= {
+	.pick_next_task=pick_next_task_fact,
+	.enqueue_task=enqueue_task_fact,
+	.steal_task=steal_task_fact
 };

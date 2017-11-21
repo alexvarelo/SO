@@ -118,6 +118,7 @@ extern sched_class_t sjf_sched;
 extern sched_class_t fcfs_sched;
 extern sched_class_t prio_sched;
 extern sched_class_t tjf_sched;
+extern sched_class_t fact_sched;
 /* Numerical IDs for the available scheduling algorithms */
 enum {
 	RR_SCHED,
@@ -125,6 +126,7 @@ enum {
 	FCFS_SCHED,
 	PRIO_SCHED,
 	TJF_SCHED,
+	FACT_SCHED,
 	NR_AVAILABLE_SCHEDULERS
 };
 
@@ -141,6 +143,7 @@ static const sched_choice_t available_schedulers[NR_AVAILABLE_SCHEDULERS]= {
 	{FCFS_SCHED,"FCFS",&fcfs_sched},
 	{PRIO_SCHED,"PRIO",&prio_sched},
 	{TJF_SCHED,"TJF",&tjf_sched},
+	{FACT_SCHED,"FACT",&fact_sched},
 };
 
 
