@@ -22,4 +22,4 @@ Nombre: Javier Martín Villarreal
 
 ~~~~
 
-Esta obra está protegida con GNU GPL v3
+Esta obra está protegida con   GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
