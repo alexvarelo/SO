@@ -14,10 +14,8 @@ Ejercicios y prácticas de la asignatura de Sistemas Operativos de la Facultad d
 | 0         | [Conceptos básicos GNU/Linux y C](/practicas/p0)      | 0   | [Practicando con fork](/ejercicios/e1-fork)                                        |
 | 1         | [Compresor y descompresor](/practicas/p1)             | 1   | [Probando ejemplos con hilos](/ejercicios/e2-hilos)                                |
 | 2         |                                                       | 2.a | [Ejemplo de variable MAL compartida entre hilos](/ejercicios/e3-LecturaEscritura)  |
-| 3         | [Simulador de planificadores en POSIX](/practicas/p3) | 2.b | Ejercicio 2 sincronización: [Fumadores](/ejercicios/e4-sincronizacion/fumadores.c) |
-| Practicas | EJercicios                                            |
-| --------- | ----------                                            |
-| 0         | conceptos                                             | 1   | conceptos                                                                          |
+| 3         | [Simulador de planificadores en POSIX](/practicas/p3) | 2.b |  [Fumadores: sincronización](/ejercicios/e4-sincronizacion/fumadores.c) |
+
 
 ~~~~
 Nombre: Javier Martín Villarreal
