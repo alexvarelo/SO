@@ -469,6 +469,10 @@ static int my_truncate(const char *path, off_t size) {
 	return 0;
 }
 
+static int my_unlink(const char *file){
+	
+}
+
 
 struct fuse_operations myFS_operations = {
 	.getattr	= my_getattr,					// Obtain attributes from a file
@@ -478,5 +482,6 @@ struct fuse_operations myFS_operations = {
 	.write		= my_write,						// Write data into a file already opened
 	.release	= my_release,					// Close an opened file
 	.mknod		= my_mknod,						// Create a new file
+	.unlink		= my_unlink,					// Remove a file
 };
 
