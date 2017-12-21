@@ -159,7 +159,7 @@ void mode_string(mode_t mode, char *str) {
  * @param stbuf file attributes
  * @return 0 on success and <0 on error
  **/
- static int my_getattr(const char *path, struct stat *stbuf) {
+static int my_getattr(const char *path, struct stat *stbuf) {
 	NodeStruct *node;
 	int idxDir;
 
@@ -180,39 +180,15 @@ void mode_string(mode_t mode, char *str) {
 	/// Rest of the world
 	if((idxDir = findFileByName(&myFileSystem, (char *)path + 1)) != -1) {
 		node = myFileSystem.nodes[myFileSystem.directory.files[idxDir].nodeIdx];
-		//Regular file...
-		if (node->type == 0){
-			stbuf->st_size = node->fileSize;
-			stbuf->st_mode = S_IFREG;
-			stbuf->st_nlink = node->nlinks;
-			stbuf->st_uid = getuid();
-			stbuf->st_gid = getgid();
-			stbuf->st_mtime = stbuf->st_ctime = node->modificationTime;
-		}
-		//Directory...
-		else if (node->type == 1){
-
-			stbuf->st_size = node->fileSize;
-			stbuf->st_mode = S_IFDIR;
-			stbuf->st_nlink = node->nlinks;
-			stbuf->st_uid = getuid();
-			stbuf->st_gid = getgid();
-			stbuf->st_mtime = stbuf->st_ctime = node->modificationTime;
-		}
-		//Hard link...
-		else if (node->type == 2){
-			stbuf->st_size = node->fileSize;
-			stbuf->st_mode = S_IFREG;
-			stbuf->st_nlink = node->nlinks;
-			stbuf->st_uid = getuid();
-			stbuf->st_gid = getgid();
-			stbuf->st_mtime = stbuf->st_ctime = node->modificationTime;
-		}
-		//Other...
-		else
-			return -EISDIR;
+		stbuf->st_size = node->fileSize;
+		stbuf->st_mode = S_IFREG | 0644;
+		stbuf->st_nlink = 1;
+		stbuf->st_uid = getuid();
+		stbuf->st_gid = getgid();
+		stbuf->st_mtime = stbuf->st_ctime = node->modificationTime;
 		return 0;
 	}
+
 	return -ENOENT;
 }
 
@@ -264,6 +240,7 @@ static int my_readdir(const char *path, void *buf, fuse_fill_dir_t filler,  off_
 				return -ENOMEM;
 		}
 	}
+
 	return 0;
 }
 
@@ -455,8 +432,7 @@ static int my_mknod(const char *path, mode_t mode, dev_t device) {
 	// Fill the fields of the new inode
 	if(myFileSystem.nodes[idxNodoI] == NULL)
 		myFileSystem.nodes[idxNodoI] = malloc(sizeof(NodeStruct));
-	
-	myFileSystem.nodes[idxNodoI]->type = 0;
+
 	myFileSystem.nodes[idxNodoI]->fileSize = 0;
 	myFileSystem.nodes[idxNodoI]->numBlocks = 0;
 	myFileSystem.nodes[idxNodoI]->modificationTime = time(NULL);
@@ -535,12 +511,13 @@ static int my_read(const char *path, char *buf, size_t size, off_t offset, struc
 		int bytesenfichero= node->fileSize;
 		int i,pos=0;
 		int idxDir=findFileByName(&myFileSystem, (char *)path + 1);
-	
+		//comprobamos que el fichero no exista
 		if(idxDir == -1)
 			return -EEXIST;
 	
 		fprintf(stderr, "--->>>my_read: path %s, size %zu, offset %jd, fh %"PRIu64"\n", path, size, (intmax_t)offset, f->fh);
 		
+		//leemos
 		while((bytes2Read >0) && (bytesenfichero >0)){
 		
 			int offbloque, bloqueactual;
@@ -551,6 +528,7 @@ static int my_read(const char *path, char *buf, size_t size, off_t offset, struc
 			if((lseek(myFileSystem.fdVirtualDisk, (bloqueactual * BLOCK_SIZE_BYTES)+offbloque, SEEK_SET)) == (off_t) - 1){
 				perror("Failed lseek/read in my_read");
 				return -EIO;
+			
 			}
 	
 			leido= read(myFileSystem.fdVirtualDisk,&buffer,(BLOCK_SIZE_BYTES-offbloque));
@@ -568,9 +546,12 @@ static int my_read(const char *path, char *buf, size_t size, off_t offset, struc
 			bytesenfichero -=leido;
 			offset+=leido;
 			
-		}
+			
+		}//fin while
 		
 		node->modificationTime = time(NULL);
+		
+		//guardamos en disco el contenido de la estructura modificada(superbloque,mapadebits,inodo)
 		sync();
 		
 		if((bytesenfichero<=0) && (bytes2Read>0)){
@@ -581,108 +562,15 @@ static int my_read(const char *path, char *buf, size_t size, off_t offset, struc
 		return size;
 	}
 
-	int my_mkdir (const char *path, mode_t mode){
-		
-		char modebuf[10];
-	
-		mode_string(mode, modebuf);
-		fprintf(stderr, "--->>>my_mkdir path %s, mode %s\n", path, modebuf); //importante my_mkdir....
-	
-		// We check that the length of the file name is correct
-		if(strlen(path + 1) > myFileSystem.superBlock.maxLenFileName) {
-			return -ENAMETOOLONG;
-		}
-	
-		// There exist an available inode
-		if(myFileSystem.numFreeNodes <= 0) {
-			return -ENOSPC;
-		}
-	
-		// There is still space for a new file
-		if(myFileSystem.directory.numFiles >= MAX_FILES_PER_DIRECTORY) {
-			return -ENOSPC;
-		}
-		// The directory exists
-		if(findFileByName(&myFileSystem, (char *)path + 1) != -1)
-			return -EEXIST;
-	
-		/// Update all the information in the backup file:
-		int idxNodoI, idxDir;
-		if((idxNodoI = findFreeNode(&myFileSystem)) == -1 || (idxDir = findFreeFile(&myFileSystem)) == -1) {
-			return -ENOSPC;
-		}
-	
-		// Update root folder
-		myFileSystem.directory.files[idxDir].freeFile = false;
-		myFileSystem.directory.numFiles++;
-		strcpy(myFileSystem.directory.files[idxDir].fileName, path + 1);
-		myFileSystem.directory.files[idxDir].nodeIdx = idxNodoI;
-		myFileSystem.numFreeNodes--;
-	
-		// Fill the fields of the new inode
-		if(myFileSystem.nodes[idxNodoI] == NULL)
-			myFileSystem.nodes[idxNodoI] = malloc(sizeof(NodeStruct));
-	
-		myFileSystem.nodes[idxNodoI]->fileSize = 0;
-		myFileSystem.nodes[idxNodoI]->numBlocks = 0;
-		//Its a directory...s
-		myFileSystem.nodes[idxNodoI]->type = 1;
-		myFileSystem.nodes[idxNodoI]->nlinks = 2;
-		myFileSystem.nodes[idxNodoI]->modificationTime = time(NULL);
-		myFileSystem.nodes[idxNodoI]->freeNode = false;
-	
-		reserveBlocksForNodes(&myFileSystem, myFileSystem.nodes[idxNodoI]->blocks, 0);
-	
-		updateDirectory(&myFileSystem);
-		updateNode(&myFileSystem, idxNodoI, myFileSystem.nodes[idxNodoI]);
-	
-		return 0;
-	}
-	
-	int my_link(const char * orig, const char * dest){
-	
-		// We check that the length of the file name is correct
-		if(strlen(dest + 1) > myFileSystem.superBlock.maxLenFileName) 
-			return -ENAMETOOLONG;
-		
-		// There is still space for a new file
-		if(myFileSystem.directory.numFiles >= MAX_FILES_PER_DIRECTORY) {
-			return -ENOSPC;
-		}
-	
-		int idxOrig = findFileByName(&myFileSystem, (char *)orig + 1);
-		
-		int idxDest;	
-		if((idxDest = findFreeFile(&myFileSystem)) == -1) {
-			return -ENOSPC;
-		}
-		myFileSystem.directory.files[idxDest].freeFile = false;
-		myFileSystem.directory.numFiles++;
-		strcpy(myFileSystem.directory.files[idxDest].fileName, dest + 1);
-		
-		// Set values in origin node
-		int idxNodoI = myFileSystem.directory.files[idxOrig].nodeIdx;
-		myFileSystem.nodes[idxNodoI]->nlinks++;
-		myFileSystem.directory.files[idxDest].nodeIdx = idxNodoI;
-		myFileSystem.nodes[myFileSystem.directory.files[idxDest].nodeIdx]->type=2;	
-		updateDirectory(&myFileSystem);
-		updateNode(&myFileSystem, idxNodoI, myFileSystem.nodes[idxNodoI]);
-		
-		return 0;
-	}
-		
-		struct fuse_operations myFS_operations = {
-			.getattr	= my_getattr,					// Obtain attributes from a file
-			.readdir	= my_readdir,					// Read directory entries
-			.truncate	= my_truncate,					// Modify the size of a file
-			.open		= my_open,						// Oeen a file
-			.write		= my_write,						// Write data into a file already opened
-			.release	= my_release,					// Close an opened file
-			.mknod		= my_mknod,						// Create a new file
-			.read 		= my_read,						// Read data for an open file
-			.unlink		= my_unlink,					// Delete a file
-			.mkdir		= my_mkdir,
-			.link		= my_link,						// Create an directory
-		};
-		
-
+struct fuse_operations myFS_operations = {
+	.getattr	= my_getattr,					// Obtain attributes from a file
+	.readdir	= my_readdir,					// Read directory entries
+	.truncate	= my_truncate,					// Modify the size of a file
+	.open		= my_open,						// Open a file
+	.write		= my_write,						// Write data into a file already opened
+	.release	= my_release,					// Close an opened file
+	.mknod		= my_mknod,						// Create a new file
+	.unlink		= my_unlink,					// Remove a file
+	.read		= my_read,					// Reads a file
+	.link		= my_link,					// Remove a file
+};
