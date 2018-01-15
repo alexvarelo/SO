@@ -7,8 +7,8 @@
 #include<pthread.h>
 
 void *trabajo(void *arg);
-void jugarConHilos();
-void circulo();
+void jugarConHilos(); //gcc -Wall -g leds_user.c -o leds_user -pthread
+void circulo();//gcc -Wall -g leds_user.c -o leds_user 
 void bajada();
 void secuencia();
 int devfile;
