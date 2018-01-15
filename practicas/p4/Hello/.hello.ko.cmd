@@ -1,0 +1,1 @@
+cmd_/home/malditasea/Documentos/git/SO/practicas/p4/Hello/hello.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/malditasea/Documentos/git/SO/practicas/p4/Hello/hello.ko /home/malditasea/Documentos/git/SO/practicas/p4/Hello/hello.o /home/malditasea/Documentos/git/SO/practicas/p4/Hello/hello.mod.o ;  true

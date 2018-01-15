@@ -1,0 +1,1 @@
+cmd_/home/malditasea/Documentos/git/SO/practicas/p4/Chardev/chardev.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/malditasea/Documentos/git/SO/practicas/p4/Chardev/chardev.ko /home/malditasea/Documentos/git/SO/practicas/p4/Chardev/chardev.o /home/malditasea/Documentos/git/SO/practicas/p4/Chardev/chardev.mod.o ;  true
