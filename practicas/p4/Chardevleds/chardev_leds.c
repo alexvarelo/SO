@@ -248,6 +248,8 @@ static inline int set_leds(struct tty_driver* handler, unsigned int mask)
 
     for (i=0; i<len; i++){ 
         leds|=(safebuf[i]=='1')?0x2:(safebuf[i]=='2')?0x4:(safebuf[i]=='3')?0x1:0x0;
+        printk(KERN_INFO "Toma el cerrojo el led: %d.\n", safebuf[i]);
+        
     }
 
     if ((err=set_leds(kbd_driver,leds)))
