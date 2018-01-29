@@ -1,0 +1,8 @@
+El programa de prueba tiene varios ejemplos: ciclo infinito (ascendente y desdendente) 
+o la implementada finalmente.
+
+El proceso crea tres hilos y fija una variable condicional para avisar a los hilos 
+dormidos cuando sea necesario.
+
+Cada dos segundos se enciende un led y no se volvera a encender si ha sido el anterior 
+en encenderse, siempre se pasa el turno a otro led diferente.
